@@ -1,14 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import './loginValidation';
 import Validation from './loginValidation';
+import axios from 'axios';
+
 export default function Login() {
     const [values, setValues] = useState({
         email: "",
         password: ""
     });
 
+    const navigate = useNavigate();
     const [errors, setErrors] = useState({});
 
     const handleInput = (e) => {
@@ -18,6 +21,22 @@ export default function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setErrors(Validation(values));
+        if (errors.email === "" && errors.password === "") {
+          axios
+            .post("http://localhost:8081/login", values)
+            .then((res) => {
+              if(res.data === "Success"){
+                navigate("/home");
+              }
+              else{
+                alert("Invalid Credentials");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          // alert("Form Submitted Successfully");
+        }
     } 
 
   return (
